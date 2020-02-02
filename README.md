@@ -18,6 +18,14 @@ npm install
 npm run dev
 ```
 
+配置：
+
+```
+## /src/config/js
+port: 端口号
+maxFileSize: 可上传文件的最大大小，单位：字节
+```
+
 # 2. API
 
 #### 上传文件
