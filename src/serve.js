@@ -6,18 +6,20 @@ const path = require("path");
 const koaBody = require("koa-body");
 const fs = require("fs");
 const mime = require("mime");
+const cors = require("@koa/cors");
 
 const router = new KoaRouter();
 const app = new Koa();
 
 app.use(static(path.join(__dirname, "./static")));
+app.use(cors());
 app.use(koaBody({ multipart: true }));
 
-router.get("/api/test", ctx => {
+router.get("/api/test", (ctx) => {
   ctx.body = "ok";
 });
 
-router.post("/api/upload", ctx => {
+router.post("/api/upload", (ctx) => {
   try {
     const file = ctx.request.files.file;
     if (!file || file.name.trim() === "" || file.size === 0) {
@@ -40,25 +42,26 @@ router.post("/api/upload", ctx => {
       data: {
         fileName: file.name,
         size: file.size,
-        type: file.type
+        type: file.type,
       },
-      msg: ""
+      msg: "",
     };
   } catch (error) {
     ctx.body = {
       success: false,
       data: {},
-      msg: error.message
+      msg: error.message,
     };
   }
 });
 
-router.get("/upload/*", ctx => {
+router.get("/upload/*", (ctx) => {
   try {
     const fileName = decodeURI(ctx.url.split("/")[2]);
     const filePath = path.join(__dirname, `./upload/${fileName}`);
     const file = fs.readFileSync(filePath);
     const contentType = mime.getType(filePath);
+    console.log("contentType: ", contentType);
     ctx.res.setHeader("Content-Type", contentType);
     ctx.body = file;
   } catch (error) {
